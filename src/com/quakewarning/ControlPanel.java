@@ -26,7 +26,7 @@ public class ControlPanel extends Activity {
 
 			@Override
 			public void onSensorChanged(SensorEvent event) {
-				String v = String.format("%1$f , %1$f , %1$f", event.values[0], event.values[1], event.values[2]);
+				String v = String.format("%1$.2f \t %2$.2f \t %3$.2f", event.values[0], event.values[1], event.values[2]);
 				TextView tv = (TextView) findViewById(R.id.Acceleration);
 				tv.setText(v);
 			}
@@ -45,6 +45,8 @@ public class ControlPanel extends Activity {
 					ctx.sensor_manager.registerListener(ctx.accelerometer_listener, ctx.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 				} else {
 					ctx.sensor_manager.unregisterListener(ctx.accelerometer_listener);
+					TextView tv = (TextView) findViewById(R.id.Acceleration);
+					tv.setText("x \t y \t z");
 				}
 			}
 		});
