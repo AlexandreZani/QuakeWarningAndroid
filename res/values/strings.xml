@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Earthquake Warning System</string>
+    <string name="enable_monitoring_label">Enable Earthquake Monitoring</string>
+    <string name="enable_plugged_in_monitoring_label">Enable When Plugged-In</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" android:orientation="vertical">
+
+  <TextView android:text="@string/app_name" android:id="@+id/TitleView" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+
+  <CheckBox android:text="@string/enable_monitoring_label" android:id="@+id/EnableMonitoring" android:layout_width="wrap_content" android:layout_height="wrap_content"></CheckBox>
+
+  <CheckBox android:text="@string/enable_plugged_in_monitoring_label" android:id="@+id/EnabledPluggedMonitoring" android:layout_width="wrap_content" android:layout_height="wrap_content"></CheckBox>
+<TextView android:text="x, y, z" android:id="@+id/Acceleration" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+</LinearLayout>
