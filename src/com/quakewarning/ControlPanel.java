@@ -1,60 +1,55 @@
 package com.quakewarning;
 
 import android.app.Activity;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Vibrator;
+import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 
 public class ControlPanel extends Activity {
-	private SensorManager sensor_manager;
-	private Sensor accelerometer;
-	private SensorEventListener accelerometer_listener;
+	private AccelerometerWatcher bound_service;
+	private SharedPreferences settings;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	this.sensor_manager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        this.accelerometer = sensor_manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        this.accelerometer_listener = new SensorEventListener() {
-			@Override
-			public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-
-			@Override
-			public void onSensorChanged(SensorEvent event) {
-				String v = String.format("%1$.2f \t %2$.2f \t %3$.2f", event.values[0], event.values[1], event.values[2]);
-				TextView tv = (TextView) findViewById(R.id.Acceleration);
-				tv.setText(v);
-			}
-		};
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        this.settings = getSharedPreferences(getString(R.string.app_name), 0);
+        
         CheckBox enable_monitoring = (CheckBox) findViewById(R.id.EnableMonitoring);
+        
+        enable_monitoring.setChecked(this.settings.getBoolean("enable_monitoring", true));
         
         enable_monitoring.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton button_view, boolean is_checked) {
 				ControlPanel ctx = (ControlPanel) button_view.getContext();
+				SharedPreferences.Editor settings_editor = ctx.settings.edit();
 				
 				if(is_checked) {
-					ctx.sensor_manager.registerListener(ctx.accelerometer_listener, ctx.accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+					Intent intent = new Intent(ctx, AccelerometerWatcher.class);
+					intent.putExtra(getString(R.string.extra_sensor_delay), SensorManager.SENSOR_DELAY_GAME);
+					intent.putExtra(getString(R.string.extra_jolt_sensitivity), new Float(500));
+					intent.putExtra(getString(R.string.extra_jolt_timeout), new Long(1000));
+					intent.putExtra(getString(R.string.extra_jolt_threashold), new Integer(5));
+					startService(intent);
 				} else {
-					ctx.sensor_manager.unregisterListener(ctx.accelerometer_listener);
-					TextView tv = (TextView) findViewById(R.id.Acceleration);
-					tv.setText("x \t y \t z");
+					stopService(new Intent(ctx, AccelerometerWatcher.class));
 				}
+				
+				settings_editor.putBoolean("enable_monitoring", is_checked);
+				settings_editor.commit();
 			}
 		});
-    }
-    
-    @Override
-    public void onStart() {
-    	super.onStart();
-    	//new AlertDialog.Builder(this).setMessage("onStart").show();
     }
 }

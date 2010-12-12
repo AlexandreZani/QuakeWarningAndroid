@@ -8,5 +8,4 @@
   <CheckBox android:text="@string/enable_monitoring_label" android:id="@+id/EnableMonitoring" android:layout_width="wrap_content" android:layout_height="wrap_content"></CheckBox>
 
   <CheckBox android:text="@string/enable_plugged_in_monitoring_label" android:id="@+id/EnabledPluggedMonitoring" android:layout_width="wrap_content" android:layout_height="wrap_content"></CheckBox>
-<TextView android:text="x \t y \t z" android:id="@+id/Acceleration" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
 </LinearLayout>

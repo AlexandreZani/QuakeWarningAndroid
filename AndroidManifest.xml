@@ -12,7 +12,9 @@
             </intent-filter>
         </activity>
 
-    </application>
+    <service android:name="AccelerometerWatcher" android:enabled="true"></service>
+</application>
 
 
+<uses-permission android:name="android.permission.VIBRATE"></uses-permission>
 </manifest> 

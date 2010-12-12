@@ -3,4 +3,9 @@
     <string name="app_name">Earthquake Warning System</string>
     <string name="enable_monitoring_label">Enable Earthquake Monitoring</string>
     <string name="enable_plugged_in_monitoring_label">Enable When Plugged-In</string>
+    <string name="accelerometer_notification">Quake Watcher Running</string>
+    <string name="extra_sensor_delay">com.quakewarning.sensor.delay</string>
+    <string name="extra_jolt_sensitivity">com.quakewarning.jolt.sensitivity</string>
+    <string name="extra_jolt_timeout">com.quakewarning.jolt.timeout</string>
+    <string name="extra_jolt_threashold">com.quakewarning.jolt.threashold</string>
 </resources>
