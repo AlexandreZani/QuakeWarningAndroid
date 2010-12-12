@@ -133,7 +133,7 @@ public class AccelerometerWatcher extends Service {
 	}
 	
 	public void stopWatcher() {
-		if (!this.watching)
+		if (this.watching)
 			return;
 		
 		this.watching = false;
