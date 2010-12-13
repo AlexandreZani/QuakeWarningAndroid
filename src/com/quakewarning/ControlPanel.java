@@ -40,12 +40,14 @@ public class ControlPanel extends Activity {
 				if(is_checked) {
 					Intent intent = new Intent(ctx, AccelerometerWatcher.class);
 					intent.putExtra(getString(R.string.extra_sensor_delay), SensorManager.SENSOR_DELAY_GAME);
-					intent.putExtra(getString(R.string.extra_jolt_sensitivity), new Float(500));
+					intent.putExtra(getString(R.string.extra_jolt_sensitivity), new Float(100));
 					intent.putExtra(getString(R.string.extra_jolt_timeout), new Long(1000));
 					intent.putExtra(getString(R.string.extra_jolt_threashold), new Integer(5));
 					startService(intent);
 				} else {
-					stopService(new Intent(ctx, AccelerometerWatcher.class));
+					if (!settings.getBoolean("enabled_plugged_monitoring", false) || !settings.getBoolean("plugged_in", false)) {
+						stopService(new Intent(ctx, AccelerometerWatcher.class));
+					}
 				}
 				
 				settings_editor.putBoolean("enable_monitoring", is_checked);
@@ -63,6 +65,17 @@ public class ControlPanel extends Activity {
 			public void onCheckedChanged(CompoundButton button_view, boolean is_checked) {
 				ControlPanel ctx = (ControlPanel) button_view.getContext();
 				SharedPreferences.Editor settings_editor = ctx.settings.edit();
+				
+				if (!is_checked && !settings.getBoolean("enabled_monitoring", false)) {
+					stopService(new Intent(ctx, AccelerometerWatcher.class));
+				} else if (is_checked && settings.getBoolean("plugged_in", false)) {
+					Intent intent = new Intent(ctx, AccelerometerWatcher.class);
+					intent.putExtra(getString(R.string.extra_sensor_delay), SensorManager.SENSOR_DELAY_GAME);
+					intent.putExtra(getString(R.string.extra_jolt_sensitivity), new Float(100));
+					intent.putExtra(getString(R.string.extra_jolt_timeout), new Long(1000));
+					intent.putExtra(getString(R.string.extra_jolt_threashold), new Integer(5));
+					startService(intent);
+				}
 
 				settings_editor.putBoolean("enable_plugged_monitoring", is_checked);
 				settings_editor.commit();

@@ -9,12 +9,18 @@ import android.os.Vibrator;
 import android.util.Log;
 
 public class PlugInReceiver extends BroadcastReceiver {
-
 	@Override
 	public void onReceive(Context ctx, Intent intent) {
-		Log.v("Hello!", ctx.getString(R.string.app_name));
 		SharedPreferences settings = ctx.getSharedPreferences(ctx.getString(R.string.app_name), 0);
-		if (!settings.getBoolean("enable_plugged_monitoring", false)) {
+		SharedPreferences.Editor settings_editor = settings.edit();
+		if (Intent.ACTION_POWER_CONNECTED.equals(intent.getAction())) {
+			settings_editor.putBoolean("plugged_in", true);
+		} else if (Intent.ACTION_POWER_DISCONNECTED.equals(intent.getAction())) {
+			settings_editor.putBoolean("plugged_in", false);
+		}
+		settings_editor.commit();
+
+		if (!settings.getBoolean("enable_plugged_monitoring", false) || settings.getBoolean("enable_monitoring", false)) {
 			return;
 		}
 		
@@ -28,7 +34,7 @@ public class PlugInReceiver extends BroadcastReceiver {
 	private void onPlugIn(Context ctx) {
 		Intent intent = new Intent(ctx, AccelerometerWatcher.class);
 		intent.putExtra(ctx.getString(R.string.extra_sensor_delay), SensorManager.SENSOR_DELAY_GAME);
-		intent.putExtra(ctx.getString(R.string.extra_jolt_sensitivity), new Float(500));
+		intent.putExtra(ctx.getString(R.string.extra_jolt_sensitivity), new Float(100));
 		intent.putExtra(ctx.getString(R.string.extra_jolt_timeout), new Long(1000));
 		intent.putExtra(ctx.getString(R.string.extra_jolt_threashold), new Integer(5));
 		ctx.startService(intent);
