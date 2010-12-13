@@ -7,14 +7,20 @@
         <activity android:name=".ControlPanel"
                   android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            	<action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
     <service android:name="AccelerometerWatcher" android:enabled="true"></service>
+
+<receiver android:name="PlugInReceiver"><intent-filter><action android:name="android.intent.action.ACTION_POWER_CONNECTED"></action>
+<action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"></action>
+</intent-filter>
+</receiver>
 </application>
 
 
 <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
+
 </manifest> 

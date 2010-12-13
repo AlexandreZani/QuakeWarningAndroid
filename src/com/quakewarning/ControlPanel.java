@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.hardware.SensorManager;
@@ -28,7 +29,7 @@ public class ControlPanel extends Activity {
         
         CheckBox enable_monitoring = (CheckBox) findViewById(R.id.EnableMonitoring);
         
-        enable_monitoring.setChecked(this.settings.getBoolean("enable_monitoring", true));
+        enable_monitoring.setChecked(this.settings.getBoolean("enable_monitoring", false));
         
         enable_monitoring.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
@@ -48,6 +49,22 @@ public class ControlPanel extends Activity {
 				}
 				
 				settings_editor.putBoolean("enable_monitoring", is_checked);
+				settings_editor.commit();
+			}
+		});
+        
+        CheckBox enable_plugged_monitoring = (CheckBox) findViewById(R.id.EnabledPluggedMonitoring);
+        
+        enable_plugged_monitoring.setChecked(this.settings.getBoolean("enable_plugged_monitoring", false));
+        
+        enable_plugged_monitoring.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton button_view, boolean is_checked) {
+				ControlPanel ctx = (ControlPanel) button_view.getContext();
+				SharedPreferences.Editor settings_editor = ctx.settings.edit();
+
+				settings_editor.putBoolean("enable_plugged_monitoring", is_checked);
 				settings_editor.commit();
 			}
 		});
