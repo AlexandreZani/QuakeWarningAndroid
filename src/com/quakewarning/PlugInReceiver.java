@@ -32,12 +32,7 @@ public class PlugInReceiver extends BroadcastReceiver {
 	}
 	
 	private void onPlugIn(Context ctx) {
-		Intent intent = new Intent(ctx, AccelerometerWatcher.class);
-		intent.putExtra(ctx.getString(R.string.extra_sensor_delay), SensorManager.SENSOR_DELAY_GAME);
-		intent.putExtra(ctx.getString(R.string.extra_jolt_sensitivity), new Float(100));
-		intent.putExtra(ctx.getString(R.string.extra_jolt_timeout), new Long(1000));
-		intent.putExtra(ctx.getString(R.string.extra_jolt_threashold), new Integer(5));
-		ctx.startService(intent);
+		ctx.startService(new Intent(ctx, AccelerometerWatcher.class));
 	}
 	
 	private void onUnplug(Context ctx) {

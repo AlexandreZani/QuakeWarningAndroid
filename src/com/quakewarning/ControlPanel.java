@@ -12,8 +12,17 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 public class ControlPanel extends Activity {
 	private AccelerometerWatcher bound_service;
@@ -38,12 +47,7 @@ public class ControlPanel extends Activity {
 				SharedPreferences.Editor settings_editor = ctx.settings.edit();
 				
 				if(is_checked) {
-					Intent intent = new Intent(ctx, AccelerometerWatcher.class);
-					intent.putExtra(getString(R.string.extra_sensor_delay), SensorManager.SENSOR_DELAY_GAME);
-					intent.putExtra(getString(R.string.extra_jolt_sensitivity), new Float(100));
-					intent.putExtra(getString(R.string.extra_jolt_timeout), new Long(1000));
-					intent.putExtra(getString(R.string.extra_jolt_threashold), new Integer(5));
-					startService(intent);
+					startService(new Intent(ctx, AccelerometerWatcher.class));
 				} else {
 					if (!settings.getBoolean("enabled_plugged_monitoring", false) || !settings.getBoolean("plugged_in", false)) {
 						stopService(new Intent(ctx, AccelerometerWatcher.class));
@@ -69,17 +73,105 @@ public class ControlPanel extends Activity {
 				if (!is_checked && !settings.getBoolean("enabled_monitoring", false)) {
 					stopService(new Intent(ctx, AccelerometerWatcher.class));
 				} else if (is_checked && settings.getBoolean("plugged_in", false)) {
-					Intent intent = new Intent(ctx, AccelerometerWatcher.class);
-					intent.putExtra(getString(R.string.extra_sensor_delay), SensorManager.SENSOR_DELAY_GAME);
-					intent.putExtra(getString(R.string.extra_jolt_sensitivity), new Float(100));
-					intent.putExtra(getString(R.string.extra_jolt_timeout), new Long(1000));
-					intent.putExtra(getString(R.string.extra_jolt_threashold), new Integer(5));
-					startService(intent);
+					startService(new Intent(ctx, AccelerometerWatcher.class));
 				}
 
 				settings_editor.putBoolean("enable_plugged_monitoring", is_checked);
 				settings_editor.commit();
 			}
 		});
+        
+        Spinner rate_selector = (Spinner) findViewById(R.id.sampling_rate_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.sample_rates_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        rate_selector.setAdapter(adapter);
+        
+        this.initializeSettings();
+        
+        Button apply_settings = (Button) findViewById(R.id.apply_settings);
+        apply_settings.setOnClickListener(new ApplySettingsListener());
+        
+        Button cancel_settings = (Button) findViewById(R.id.cancel_settings);
+        cancel_settings.setOnClickListener(new CancelSettingsListener());
+    }
+    
+    private void initializeSettings() {
+    	Spinner rate_selector = (Spinner) findViewById(R.id.sampling_rate_spinner);
+    	int rate = this.settings.getInt("accelerometer_rate", SensorManager.SENSOR_DELAY_NORMAL);
+        int pos;
+        switch(rate) {
+		case SensorManager.SENSOR_DELAY_UI:
+			pos = 0;
+			break;
+		case SensorManager.SENSOR_DELAY_NORMAL:
+			pos = 1;
+			break;
+		case SensorManager.SENSOR_DELAY_GAME:
+			pos = 2;
+			break;
+		case SensorManager.SENSOR_DELAY_FASTEST:
+			pos = 3;
+			break;
+		default:
+			pos = 1;
+		}
+        rate_selector.setSelection(pos);
+        
+        EditText sensitivity = (EditText) findViewById(R.id.jolt_sensitivity);
+        sensitivity.setText(Float.toString(settings.getFloat("jolt_sensitivity", 100)));
+        
+        EditText jolt_timeout = (EditText) findViewById(R.id.jolt_timeout);
+        jolt_timeout.setText(Long.toString(settings.getLong("jolt_timeout", 1000)));
+        
+        EditText jolt_threashold = (EditText) findViewById(R.id.jolt_threashold);
+        jolt_threashold.setText(Integer.toString(settings.getInt("jolt_threashold", 3)));
+    }
+    
+    public class CancelSettingsListener implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			initializeSettings();
+		}
+    }
+    
+    public class ApplySettingsListener implements OnClickListener {
+		@Override
+		public void onClick(View button) {
+			SharedPreferences settings = getSharedPreferences(getString(R.string.app_name), 0);
+			SharedPreferences.Editor settings_editor = settings.edit();
+			
+			Spinner rate_selector = (Spinner) findViewById(R.id.sampling_rate_spinner);
+			int pos = rate_selector.getSelectedItemPosition();
+			int rate;
+			
+			switch(pos) {
+			case 0:
+				rate = SensorManager.SENSOR_DELAY_UI;
+				break;
+			case 1:
+				rate = SensorManager.SENSOR_DELAY_NORMAL;
+				break;
+			case 2:
+				rate = SensorManager.SENSOR_DELAY_GAME;
+				break;
+			case 3:
+				rate = SensorManager.SENSOR_DELAY_FASTEST;
+				break;
+			default:
+				rate = SensorManager.SENSOR_DELAY_NORMAL;
+			}
+			settings_editor.putInt("accelerometer_rate", rate);
+			
+			EditText sensitivity = (EditText) findViewById(R.id.jolt_sensitivity);
+			settings_editor.putFloat("jolt_sensitivity", Float.parseFloat(sensitivity.getText().toString()));
+			
+			EditText jolt_timeout = (EditText) findViewById(R.id.jolt_timeout);
+			settings_editor.putLong("jolt_timeout", Long.parseLong(jolt_timeout.getText().toString()));
+			
+			EditText jolt_threashold = (EditText) findViewById(R.id.jolt_threashold);
+			settings_editor.putInt("jolt_threashold", Integer.parseInt(jolt_threashold.getText().toString()));
+	
+			settings_editor.commit();
+		}	
     }
 }

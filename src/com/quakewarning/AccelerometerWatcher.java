@@ -95,13 +95,15 @@ public class AccelerometerWatcher extends Service {
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		int delay = intent.getExtras().getInt(getString(R.string.extra_sensor_delay));
+		SharedPreferences settings = getSharedPreferences(getString(R.string.app_name), 0);
+		int delay = settings.getInt("accelerometer_rate", SensorManager.SENSOR_DELAY_NORMAL);
+		
 		this.jolt_counter = 0;
 		this.last_jolt = 0;
-		
-		this.sensitivity = intent.getExtras().getFloat(getString(R.string.extra_jolt_sensitivity));
-		this.jolt_timeout = intent.getExtras().getLong(getString(R.string.extra_jolt_timeout));
-		this.jolt_threashold = intent.getExtras().getInt(getString(R.string.extra_jolt_threashold));;
+
+		this.sensitivity = settings.getFloat("jolt_sensitivity", 100);
+		this.jolt_timeout = settings.getLong("jolt_timeout", 1000);
+		this.jolt_threashold = settings.getInt("jolt_threashold", 3);
 		
 		this.startWatcher(delay);
 		
