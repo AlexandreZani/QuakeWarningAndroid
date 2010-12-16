@@ -1,7 +1,6 @@
 package com.quakewarning;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -15,7 +14,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.util.Log;
-import android.widget.TextView;
 
 public class AccelerometerWatcher extends Service {
 	private SensorManager sensor_manager;
