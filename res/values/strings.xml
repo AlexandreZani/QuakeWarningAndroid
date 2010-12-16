@@ -26,9 +26,9 @@
     <string name="cancel">Cancel Settings</string>
     <string name="sampling_rate">Sampling Rate</string>
     <string-array name="sample_rates_array">
-    	<item>Slowest</item>
-    	<item>Normal</item>
-    	<item>Fast</item>
-    	<item>Fastest</item>
+        <item>Slowest</item>
+        <item>Normal</item>
+        <item>Fast</item>
+        <item>Fastest</item>
     </string-array>
 </resources>
